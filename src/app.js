@@ -2,6 +2,7 @@
 require("dotenv").config();
 const Discord = require("discord.js");
 const ms = require("ms");
+const axios = require("axios").default;
 
 //* Create a new client using the new keyword
 const client = new Discord.Client();
@@ -19,12 +20,13 @@ const commands = [
   "test",
   "clear",
   "mute",
+  "affirmation",
 ];
 
 //* Display a message once the bot has started
 client.once("ready", () => {
   client.user
-    .setActivity("my master Barbarossa", { type: "LISTENING" })
+    .setActivity("my master Yomudogly", { type: "LISTENING" })
     .catch(console.error());
   console.log(`Logged in as ${client.user.tag}!`);
 });
@@ -260,6 +262,22 @@ client.on("message", (msg) => {
           msg.channel.send(`${person.user} has now been unmuted`);
         }, ms(time));
       }
+      break;
+    //! Affirmation
+    case commands[8]:
+      msg.channel.bulkDelete(1);
+      axios
+        .get("https://www.affirmations.dev/")
+        .then((response) => {
+          msg.channel.send(response.data.affirmation);
+        })
+        .catch((error) => {
+          console.log(error);
+          msg.channel.send("Couldn't fetch data").then((msg) => {
+            msg.delete({ timeout: 3000 });
+          });
+        });
+
       break;
   }
 });
